@@ -1,9 +1,20 @@
+import sys
+import os
+
+project_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(project_path)
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.db.base import Base
+from app.db.session import engine
+
 import uvicorn
 
+
 app = FastAPI(title="Fastapi Blog Backend")
+Base.metadata.create_all(engine)
 
 app.add_middleware(
     CORSMiddleware,
