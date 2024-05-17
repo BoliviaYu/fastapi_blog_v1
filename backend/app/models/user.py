@@ -1,7 +1,5 @@
 from app.db.base import Base, timestamp
 
-# from app.db.base import Base, timestamp
-
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import String, Integer, Boolean
 
