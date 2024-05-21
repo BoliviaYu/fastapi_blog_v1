@@ -128,3 +128,39 @@ def update_user_by_username(
         )
     result = update_user(db=db, user=user, username=username)
     return result
+
+
+@router.post(
+    "/token",
+    response_model=schemas.Token,
+    status_code=status.HTTP_200_OK,
+    summary="Get access token",
+)
+def login_for_access_token(
+    response: Response = None,
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db),
+) -> schemas.Token:
+    user = authenticate_user(
+        db=db, username=form_data.username, password=form_data.password
+    )
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.username}, expires_delta=access_token_expires
+    )
+    token_data = {"access_token": access_token, "token_type": "bearer"}
+    response.set_cookie(
+        key="access_token",
+        value=f"Bearer {access_token}",
+        httponly=True,
+        samesite="lax",
+        max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        expires=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+    )
+    return token_data
