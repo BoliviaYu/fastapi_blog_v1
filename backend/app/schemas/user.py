@@ -1,4 +1,5 @@
 from typing import Optional, Any
+from datetime import datetime
 
 from pydantic import BaseModel, field_validator, StrictBool
 
@@ -22,11 +23,40 @@ class UserCreate(UserBase):
 
     @field_validator("email")
     @classmethod
-    def validate_email(cls, email: Any) -> str:
-        if len(email == 0):
+    def validate_email(cls, email: str) -> str:
+        if len(email) == 0:
             raise ValueError("Email cannot be empty")
         return email
-    
-    @field_validator("password")
+
+    @field_validator("profile")
     @classmethod
-    
+    def validate_profile(cls, profile: str) -> str:
+        if len(profile) == 0:
+            raise ValueError("A profile is required")
+        return profile
+
+
+class User(UserBase):
+    id: Optional[int] = None
+
+
+class UserInDB(User):
+    hashed_password: str
+
+
+class UserOutDB(User):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+
+class Users(User):
+    id: int
+
+
+class UserUpdate(UserBase):
+    password: Optional[str]
+
+
+class UserPassword(BaseModel):
+    password: Optional[str] = None

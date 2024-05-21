@@ -11,10 +11,19 @@ class Base(DeclarativeBase):
     pass
 
 
-timestamp = Annotated[
+create_time = Annotated[
     datetime.datetime,
     mapped_column(
         nullable=False,
         server_default=func.now(),
+    ),
+]
+
+update_time = Annotated[
+    datetime.datetime,
+    mapped_column(
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
     ),
 ]

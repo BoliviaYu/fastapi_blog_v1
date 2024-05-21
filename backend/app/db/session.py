@@ -1,21 +1,11 @@
-from contextlib import contextmanager
+from typing import Any
+
 from app.config import settings
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
-
-engine = create_engine(settings.DATABASE_URL)
+from sqlalchemy.orm import sessionmaker
 
 
-@contextmanager
-def session_scope():
-    """Provide a transactional scope around a series of operations."""
-    session = Session(engine)
-    try:
-        yield session
-        session.commit()
-    except:
-        session.rollback()
-        raise
-    finally:
-        session.close()
+engine = create_engine(settings.DATABASE_URL, echo=True)
+
+SessionLocal: Any = sessionmaker(autocommit=False, autoflush=False, bind=engine)
