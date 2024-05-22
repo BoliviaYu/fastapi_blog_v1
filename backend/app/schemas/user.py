@@ -1,5 +1,6 @@
 from typing import Optional, Any
 from datetime import datetime
+from app.models.user import UserRole
 
 from pydantic import BaseModel, field_validator, StrictBool
 
@@ -8,6 +9,7 @@ class UserBase(BaseModel):
     username: str
     profile: str
     email: str
+    role: UserRole = UserRole.visitor
     disabled: StrictBool = False
 
 
@@ -48,10 +50,6 @@ class UserOutDB(User):
     id: int
     created_at: datetime
     updated_at: datetime
-
-
-class Users(User):
-    id: int
 
 
 class UserUpdate(UserBase):

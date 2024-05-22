@@ -20,6 +20,7 @@ from app.services import (
     get_user_by_email,
     get_user_by_id,
     get_user_by_username,
+    delete_user,
     get_users,
     update_user,
 )
@@ -164,3 +165,28 @@ def login_for_access_token(
         expires=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
     )
     return token_data
+
+
+@router.delete(
+    "/user/{username}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete user by name",
+)
+def delete_user_by_username(
+    username: str,
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(get_current_active_user),
+) -> None:
+    if username != current_user.username and current_user.role != "super_admin":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="You are not authorized to delete this user",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    # if get_user_by_username(db=db, username=username) is None:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_404_NOT_FOUND,
+    #         detail="User not found",
+    #     )
+    delete_user(username=username, db=db)
+    return None

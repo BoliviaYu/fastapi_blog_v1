@@ -23,6 +23,13 @@ def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[models.User]
     return db.query(models.User).offset(skip).limit(limit).all()
 
 
+def delete_user(db: Session, username: str) -> None:
+    user = get_user_by_username(db=db, username=username)
+    db.delete(user)
+    db.commit()
+    return None
+
+
 def create_user(db: Session, user: schemas.UserCreate) -> models.User:
     hashed_password = security.get_hashed_password(user.password)
     user_data = user.model_dump()

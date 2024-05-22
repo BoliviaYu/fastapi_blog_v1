@@ -1,11 +1,10 @@
 import sys, os
-import time
 
 # add parent_path which is /backend to sys.path
 project_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_path)
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import add_pagination
 
@@ -20,6 +19,7 @@ from app import models
 Base.metadata.create_all(bind=engine)
 
 from app.routers import users
+from app.middleware import LoggerMiddleware
 
 import uvicorn
 
@@ -49,24 +49,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.middleware("http")
-async def log_request_middleware(request: Request, call_next):
-    start_time = time.time()
-    response = await call_next(request)
-    process_time = time.time() - start_time
-
-    logger.info(
-        "Request: {method} {url} {status} {process_time:.2f}ms",
-        method=request.method,
-        url=request.url,
-        status=response.status_code,
-        process_time=process_time * 1000,
-    )
-
-    return response
-
+app.add_middleware(LoggerMiddleware, header_namespace="X-Log")
 
 app.include_router(users.router)
 

@@ -5,7 +5,7 @@ from .user import (
     UserUpdate,
     UserInDB,
     UserOutDB,
-    Users,
     UserPassword,
+    UserRole,
 )
 from .token import Token, TokenData
