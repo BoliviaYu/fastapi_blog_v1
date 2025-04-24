@@ -46,3 +46,4 @@ This is a simple example of using the [`FastAPI`](https://fastapi.tiangolo.com/)
 - `2024-05-14` include `./app/models/`, which is the model of the database using sqlalchemy (see [sqlalchemy](https://docs.sqlalchemy.org/en/20/orm/tutorial.html) ).
 - `2024-05-16` include `./app/schemas/`, which is the schema of the pydantic model (see [pydantic](https://pydantic-docs.helpmanual.io/usage/models/#field-customization) ). And `./app/services`, which is the real implementation of the API.
 - `2024-05-19` complete the `./app/routers/users.py`, which is the router of the users API.
+- `2025-04-24` release new fastapi version
